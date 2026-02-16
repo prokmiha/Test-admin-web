@@ -1,0 +1,134 @@
+{
+  "identity": {
+    "name": "E1",
+    "persona": "Anti-AI Designer",
+    "philosophy": "Fusion over Imitation. Emotion First. Content is King."
+  },
+  "project": {
+    "name": "Admin Dashboard",
+    "type": "Admin Panel / SaaS Dashboard",
+    "theme_strategy": "The 'Electric Void' (Material Pro)",
+    "primary_color": "#6200ee",
+    "font_strategy": "Technical & Legible"
+  },
+  "typography": {
+    "font_family_headings": "Manrope, sans-serif",
+    "font_family_body": "Inter, sans-serif",
+    "scale": {
+      "h1": "text-4xl font-bold tracking-tight text-slate-900",
+      "h2": "text-3xl font-bold tracking-tight text-slate-900",
+      "h3": "text-2xl font-semibold tracking-tight text-slate-900",
+      "body": "text-base font-normal leading-relaxed text-slate-600",
+      "small": "text-sm font-medium text-slate-500"
+    }
+  },
+  "colors": {
+    "palette": {
+      "primary": {
+        "DEFAULT": "#6200ee",
+        "foreground": "#ffffff",
+        "50": "#f3eafa",
+        "100": "#e6d4f5",
+        "200": "#cba8eb",
+        "300": "#b07ce0",
+        "400": "#9550d6",
+        "500": "#6200ee",
+        "600": "#5a00d9",
+        "700": "#4f00bf",
+        "800": "#4500a6",
+        "900": "#3b008c"
+      },
+      "secondary": {
+        "DEFAULT": "#f1f5f9",
+        "foreground": "#0f172a"
+      },
+      "background": "#ffffff",
+      "foreground": "#0f172a",
+      "muted": "#f8fafc",
+      "muted_foreground": "#64748b",
+      "border": "#e2e8f0",
+      "sidebar": {
+        "background": "#0f172a",
+        "foreground": "#f8fafc",
+        "accent": "#6200ee",
+        "accent_foreground": "#ffffff"
+      }
+    },
+    "usage_rules": [
+      "CRITICAL: Use Primary (#6200ee) ONLY for key actions (Primary Buttons, Active States, Important Links).",
+      "Sidebar MUST be dark (#0f172a) to provide contrast with the light content area.",
+      "Content area background should be white or very light gray (#f8fafc).",
+      "Text must be Slate-900 (Headings) and Slate-600 (Body) for optimal readability.",
+      "Success/Error colors should be vibrant but used sparingly (badges, toast borders)."
+    ]
+  },
+  "layout": {
+    "structure": "Sidebar Navigation + Top Header + Main Content Area",
+    "grid_system": {
+      "dashboard": "Bento Grid (Grid Cols 4)",
+      "list_views": "Single Column Card Layout or Table View"
+    },
+    "spacing": {
+      "container_padding": "p-6 md:p-8 lg:p-12",
+      "element_gap": "gap-6",
+      "section_gap": "gap-12"
+    },
+    "sidebar": {
+      "width": "w-64",
+      "behavior": "Fixed on Desktop, Drawer on Mobile"
+    }
+  },
+  "components": {
+    "buttons": {
+      "style": "pill",
+      "radius": "rounded-full",
+      "shadow": "shadow-none",
+      "hover": "hover:opacity-90 transition-opacity"
+    },
+    "cards": {
+      "style": "flat_border",
+      "classes": "bg-white border border-slate-200 shadow-sm rounded-xl"
+    },
+    "inputs": {
+      "style": "modern_clean",
+      "classes": "h-10 rounded-lg border-slate-200 focus:ring-2 focus:ring-[#6200ee] focus:border-transparent"
+    },
+    "tables": {
+      "style": "clean_rows",
+      "header_classes": "bg-slate-50 text-slate-500 uppercase text-xs tracking-wider",
+      "row_classes": "hover:bg-slate-50 transition-colors border-b border-slate-100"
+    },
+    "navigation": {
+      "item_classes": "flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition-colors",
+      "active_classes": "bg-[#6200ee] text-white",
+      "inactive_classes": "text-slate-400 hover:text-white hover:bg-slate-800"
+    }
+  },
+  "visual_enhancers": {
+    "shadows": "Very subtle, distinct shadows. Example: shadow-[0_2px_8px_rgba(0,0,0,0.04)]",
+    "borders": "Crisp 1px borders in slate-200. No thick outlines.",
+    "micro_interactions": "Buttons scale down slightly on click (active:scale-95). Links fade on hover.",
+    "glassmorphism": "Use sparingly. Only on sticky headers or overlays (backdrop-blur-md bg-white/80)."
+  },
+  "image_urls": {
+    "login_background": "https://images.unsplash.com/photo-1758812098114-8055538cbbdc?crop=entropy&cs=srgb&fm=jpg&ixid=M3w3NDQ2NDN8MHwxfHNlYXJjaHwyfHxtaW5pbWFsaXN0JTIwYWJzdHJhY3QlMjBzaGFwZXMlMjBwdXJwbGV8ZW58MHx8fHwxNzcxMjgzODA3fDA&ixlib=rb-4.1.0&q=85",
+    "empty_state_placeholder": "https://images.unsplash.com/photo-1770034285759-236c9fbd97c5?crop=entropy&cs=srgb&fm=jpg&ixid=M3w3NDQ2NDN8MHwxfHNlYXJjaHwzfHxtaW5pbWFsaXN0JTIwYWJzdHJhY3QlMjBzaGFwZXMlMjBwdXJwbGV8ZW58MHx8fHwxNzcxMjgzODA3fDA&ixlib=rb-4.1.0&q=85"
+  },
+  "instructions_to_main_agent": {
+    "step_1": "Setup Theme: Update tailwind.config.js with the #6200ee primary color and slate palette.",
+    "step_2": "Create Layout: Build the SidebarLayout component using the Sidebar guidelines (Fixed left, responsive).",
+    "step_3": "Dashboard Page: Implement the 'Bento Grid' layout for Analytics using Recharts and Cards.",
+    "step_4": "Data Tables: Build a reusable DataTable component (Shadcn Table) with Pagination, Filtering, and Sorting for Categories/Products.",
+    "step_5": "Forms: Use Shadcn Form + Zod for Create/Edit modals/drawers. Styling must match 'inputs' guidelines.",
+    "step_6": "Settings: Create a clean list/tab view for Settings pages.",
+    "testing": "Ensure all interactive elements have data-testid attributes."
+  },
+  "UNIVERSAL_GUIDELINES": [
+    "Do not use gradients for backgrounds, keep it flat and clean.",
+    "Ensure high contrast: Text on white bg must be slate-900 or slate-600.",
+    "Use 'lucide-react' for icons.",
+    "Spacing is key: Use 'p-8' or 'gap-6' to let data breathe.",
+    "Animations: Use 'framer-motion' for page transitions and list entry animations.",
+    "Tables should not look like spreadsheets. Use generous padding (py-4) and clear typography."
+  ]
+}
