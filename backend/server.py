@@ -4,6 +4,8 @@ from starlette.middleware.cors import CORSMiddleware
 from motor.motor_asyncio import AsyncIOMotorClient
 import os
 import logging
+import hashlib
+import hmac
 from pathlib import Path
 from pydantic import BaseModel, Field, ConfigDict
 from typing import List, Optional
@@ -387,6 +389,109 @@ async def get_archived_items():
         "categories": archived_categories,
         "products": archived_products
     }
+
+# Telegram Auth Models
+class TelegramAuthData(BaseModel):
+    id: int
+    first_name: str
+    last_name: Optional[str] = ""
+    username: Optional[str] = ""
+    photo_url: Optional[str] = ""
+    auth_date: int
+    hash: str
+
+
+class TelegramUser(BaseModel):
+    telegram_id: int
+    first_name: str
+    last_name: Optional[str] = ""
+    username: Optional[str] = ""
+    photo_url: Optional[str] = ""
+    auth_date: datetime
+    session_token: str
+
+
+def verify_telegram_auth(data: dict, bot_token: str) -> bool:
+    """Verify data received from Telegram Login Widget.
+    See https://core.telegram.org/widgets/login#checking-authorization"""
+    check_hash = data.pop("hash", "")
+    sorted_data = "\n".join(f"{k}={v}" for k, v in sorted(data.items()) if v)
+    secret_key = hashlib.sha256(bot_token.encode()).digest()
+    computed_hash = hmac.new(secret_key, sorted_data.encode(), hashlib.sha256).hexdigest()
+    return computed_hash == check_hash
+
+
+@api_router.post("/auth/telegram")
+async def telegram_auth(auth_data: TelegramAuthData):
+    bot_token = os.environ.get("TELEGRAM_BOT_TOKEN", "")
+
+    data_dict = auth_data.model_dump()
+
+    if bot_token:
+        data_for_check = {k: v for k, v in data_dict.items() if k != "hash"}
+        if not verify_telegram_auth(data_for_check.copy(), bot_token):
+            raise HTTPException(status_code=401, detail="Invalid Telegram auth data")
+    else:
+        logger.warning("TELEGRAM_BOT_TOKEN not set — skipping hash verification (stub mode)")
+
+    session_token = str(uuid.uuid4())
+
+    user_doc = {
+        "telegram_id": auth_data.id,
+        "first_name": auth_data.first_name,
+        "last_name": auth_data.last_name or "",
+        "username": auth_data.username or "",
+        "photo_url": auth_data.photo_url or "",
+        "auth_date": datetime.fromtimestamp(auth_data.auth_date, tz=timezone.utc).isoformat(),
+        "session_token": session_token,
+        "last_login": datetime.now(timezone.utc).isoformat(),
+    }
+
+    await db.users.update_one(
+        {"telegram_id": auth_data.id},
+        {"$set": user_doc},
+        upsert=True,
+    )
+
+    return {
+        "session_token": session_token,
+        "user": {
+            "telegram_id": auth_data.id,
+            "first_name": auth_data.first_name,
+            "last_name": auth_data.last_name or "",
+            "username": auth_data.username or "",
+            "photo_url": auth_data.photo_url or "",
+        },
+    }
+
+
+@api_router.get("/auth/me")
+async def get_current_user(token: str = ""):
+    if not token:
+        raise HTTPException(status_code=401, detail="No session token provided")
+
+    user = await db.users.find_one({"session_token": token}, {"_id": 0})
+    if not user:
+        raise HTTPException(status_code=401, detail="Invalid session token")
+
+    return {
+        "telegram_id": user["telegram_id"],
+        "first_name": user["first_name"],
+        "last_name": user.get("last_name", ""),
+        "username": user.get("username", ""),
+        "photo_url": user.get("photo_url", ""),
+    }
+
+
+@api_router.post("/auth/logout")
+async def logout(token: str = ""):
+    if token:
+        await db.users.update_one(
+            {"session_token": token},
+            {"$set": {"session_token": ""}},
+        )
+    return {"message": "Logged out"}
+
 
 # Include the router in the main app
 app.include_router(api_router)
