@@ -7,10 +7,12 @@ import {
   Settings as SettingsIcon,
   Menu,
   X,
-  ChevronRight
+  ChevronRight,
+  LogOut
 } from 'lucide-react';
 import { Button } from './ui/button';
 import { ScrollArea } from './ui/scroll-area';
+import { useAuth } from '../context/AuthContext';
 
 const navigation = [
   { name: 'Аналитика', href: '/analytics', icon: LayoutDashboard },
@@ -22,6 +24,7 @@ const navigation = [
 export default function Layout() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const location = useLocation();
+  const { user, logout } = useAuth();
 
   const getCurrentPageName = () => {
     const current = navigation.find(item => item.href === location.pathname);
@@ -122,9 +125,32 @@ export default function Layout() {
               </h1>
             </div>
             <div className="flex items-center gap-3">
-              <div className="w-8 h-8 rounded-full bg-[#6200ee] flex items-center justify-center">
-                <span className="text-sm font-medium text-white">A</span>
-              </div>
+              {user?.photo_url ? (
+                <img
+                  src={user.photo_url}
+                  alt={user.first_name}
+                  className="w-8 h-8 rounded-full object-cover"
+                />
+              ) : (
+                <div className="w-8 h-8 rounded-full bg-[#6200ee] flex items-center justify-center">
+                  <span className="text-sm font-medium text-white">
+                    {user?.first_name?.charAt(0) || 'A'}
+                  </span>
+                </div>
+              )}
+              <span className="hidden sm:inline text-sm font-medium text-slate-700">
+                {user?.first_name}
+                {user?.last_name ? ` ${user.last_name}` : ''}
+              </span>
+              <Button
+                variant="ghost"
+                size="icon"
+                className="text-slate-400 hover:text-slate-600"
+                onClick={logout}
+                title="Выйти"
+              >
+                <LogOut className="w-4 h-4" />
+              </Button>
             </div>
           </div>
         </header>
